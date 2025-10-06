@@ -74,12 +74,15 @@ export default function AuthCallback() {
         } else if (tokens.code) {
           const { error } = await sb.auth.exchangeCodeForSession(tokens.code)
           if (error) throw error
-        } else if (tokens.accessToken && tokens.refreshToken) {
+        } else if (tokens.accessToken) {
           const { error } = await sb.auth.setSession({
             access_token: tokens.accessToken,
-            refresh_token: tokens.refreshToken,
+            refresh_token: tokens.refreshToken ?? '',
           })
-          if (error) throw error
+          if (error) {
+            const { data: sessionAfterSet } = await sb.auth.getSession()
+            if (!sessionAfterSet.session) throw error
+          }
         } else {
           throw new Error('Auth callback missing credentials.')
         }
