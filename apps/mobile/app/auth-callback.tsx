@@ -58,7 +58,12 @@ export default function AuthCallback() {
 
         handledRef.current = true
 
-        const emailHint = tokens.email || toSingle(params.email) || extractEmail(url) || (typeof window !== 'undefined' ? extractEmail(typeof window !== 'undefined' ? window.location?.href : undefined) : undefined) || await AsyncStorage.getItem('last_signup_email') || undefined
+        const emailHint = tokens.email
+          || toSingle(params.email)
+          || extractEmail(url)
+          || (typeof window !== 'undefined' ? extractEmail(window.location?.href) : undefined)
+          || await AsyncStorage.getItem('last_signup_email')
+          || undefined
 
         if (tokens.otpToken) {
           if (!emailHint) {
