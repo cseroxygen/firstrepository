@@ -35,11 +35,6 @@ export default function AuthCallback() {
 
     console.log('[auth-callback] effect triggered', { params, url })
 
-    const hasParamPayload = hasCallbackParams(params)
-    if (!url && !hasParamPayload) {
-      return
-    }
-
     let cancelled = false
     const run = async () => {
       try {
