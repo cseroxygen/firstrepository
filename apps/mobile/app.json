@@ -25,7 +25,7 @@
     "extra": {
       "supabaseUrl": "https://plinglkepsmiznrxzvnq.supabase.co",
       "supabaseAnon": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsaW5nbGtlcHNtaXpucnh6dm5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1OTg4NzcsImV4cCI6MjA3MzE3NDg3N30.xuAQFJqeosRRayYVkJDpErRB9wTfyBlkFkNBY2_fbC4",
-      "apiBase": "http://46.101.240.53:8000",
+      "apiBase": "http://api.homeref.online:8000",
       "router": {
         "origin": false
       },

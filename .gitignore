@@ -5,6 +5,7 @@ infra/minio_data/
 infra/qdrant_data/
 infra/minio-config/
 infra/qdrant-snapshots/
+.DS_Store
 .env
 node_modules/
 .venv/
