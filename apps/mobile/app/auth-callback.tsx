@@ -38,6 +38,8 @@ export default function AuthCallback() {
     const run = async () => {
       try {
         const tokens = extractAuthTokens(params, url)
+        console.log('[auth-callback] incoming params', params, url)
+        console.log('[auth-callback] resolved tokens', tokens)
         const sb = await ensureSupabase()
 
         if (!tokens) {
@@ -104,8 +106,10 @@ export default function AuthCallback() {
           }
         }
       } catch (e: any) {
+        const msg = e?.message || String(e)
+        console.error('[auth-callback] failed', msg, e)
         if (!cancelled) {
-          setErr(e?.message || String(e))
+          setErr(msg)
         }
       }
     }
