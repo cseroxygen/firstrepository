@@ -22,7 +22,9 @@ const TOKEN_KEY_MAP: ReadonlyArray<[TokenField, AuthParamKey]> = [
 
 export default function AuthCallback() {
   const params = useLocalSearchParams<AuthParams>()
-  const url = useURL()
+  const urlFromHook = useURL()
+  const [linkUrl, setLinkUrl] = useState<string | null>(urlFromHook ?? null)
+  const url = linkUrl
   console.log('[auth-callback] component mounted', params, url)
   const r = useRouter()
   const [err, setErr] = useState<string | null>(null)
@@ -33,7 +35,6 @@ export default function AuthCallback() {
 
     const hasParamPayload = hasCallbackParams(params)
     if (!url && !hasParamPayload) {
-      // Wait until we receive either a URL event or params
       return
     }
 
@@ -124,6 +125,22 @@ export default function AuthCallback() {
       cancelled = true
     }
   }, [params, url, r])
+
+  useEffect(() => {
+    if (urlFromHook) {
+      setLinkUrl(urlFromHook)
+    }
+  }, [urlFromHook])
+
+  useEffect(() => {
+    const subscription = ExpoLinking.addEventListener('url', (event) => {
+      console.log('[auth-callback] event url', event.url)
+      setLinkUrl(event.url)
+    })
+    return () => {
+      subscription.remove()
+    }
+  }, [])
 
   return (
     <View style={{ flex:1, alignItems:'center', justifyContent:'center', padding:24 }}>
