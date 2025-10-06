@@ -33,6 +33,8 @@ export default function AuthCallback() {
   useEffect(() => {
     if (handledRef.current) return
 
+    console.log('[auth-callback] effect triggered', { params, url })
+
     const hasParamPayload = hasCallbackParams(params)
     if (!url && !hasParamPayload) {
       return
