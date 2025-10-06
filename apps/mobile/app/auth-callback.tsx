@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { View, ActivityIndicator, Text } from 'react-native'
 import { useURL } from 'expo-linking'
+import * as ExpoLinking from 'expo-linking'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { ensureSupabase } from '@/lib/supabase'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -32,19 +33,21 @@ export default function AuthCallback() {
 
     const hasParamPayload = hasCallbackParams(params)
     if (!url && !hasParamPayload) {
+      // Wait until we receive either a URL event or params
       return
     }
 
     let cancelled = false
     const run = async () => {
       try {
-        const tokens = extractAuthTokens(params, url)
-        console.log('[auth-callback] incoming params', params, url)
+        const resolvedUrl = url ?? await ExpoLinking.getInitialURL()
+        const tokens = extractAuthTokens(params, resolvedUrl)
+        console.log('[auth-callback] incoming params', params, resolvedUrl)
         console.log('[auth-callback] resolved tokens', tokens)
         const sb = await ensureSupabase()
 
         if (!tokens) {
-          if (!url) {
+          if (!resolvedUrl) {
             return
           }
           handledRef.current = true
@@ -63,7 +66,7 @@ export default function AuthCallback() {
 
         const emailHint = tokens.email
           || toSingle(params.email)
-          || extractEmail(url)
+          || extractEmail(resolvedUrl)
           || (typeof window !== 'undefined' ? extractEmail(window.location?.href) : undefined)
           || await AsyncStorage.getItem('last_signup_email')
           || undefined
