@@ -1,0 +1,14 @@
+.env
+node_modules/
+.venv/
+infra/minio_data/
+infra/qdrant_data/
+infra/minio-config/
+infra/qdrant-snapshots/
+.env
+node_modules/
+.venv/
+infra/minio_data/
+infra/qdrant_data/
+infra/minio-config/
+infra/qdrant-snapshots/
