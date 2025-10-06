@@ -15,7 +15,8 @@
       "bundleIdentifier": "com.homeref.app",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow HomeRef to access your files to import manuals.",
-        "NSDocumentsFolderUsageDescription": "Allow HomeRef to store manual files locally."
+        "NSDocumentsFolderUsageDescription": "Allow HomeRef to store manual files locally.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -24,7 +25,13 @@
     "extra": {
       "supabaseUrl": "https://plinglkepsmiznrxzvnq.supabase.co",
       "supabaseAnon": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsaW5nbGtlcHNtaXpucnh6dm5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1OTg4NzcsImV4cCI6MjA3MzE3NDg3N30.xuAQFJqeosRRayYVkJDpErRB9wTfyBlkFkNBY2_fbC4",
-      "apiBase": "http://192.168.68.62:8000"
+      "apiBase": "http://46.101.240.53:8000",
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3513c68e-1c50-441b-bc6c-a6ab6924020c"
+      }
     },
     "plugins": [
       "expo-router",
