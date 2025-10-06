@@ -7,7 +7,10 @@ export default function RootLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
   <Stack.Screen name="index" options={{ headerShown: false }} />
-  <Stack.Screen name="auth" options={{ headerShown: true, title: 'Sign in' }} />
+  <Stack.Screen
+    name="auth"
+    options={{ headerShown: true, title: 'Sign in', headerBackVisible: false, headerLeft: () => null }}
+  />
   <Stack.Screen name="register" options={{ headerShown: true, title: 'Create account' }} />
   <Stack.Screen name="reset-password" options={{ headerShown: true, title: 'Reset password' }} />
   <Stack.Screen name="auth-callback" options={{ headerShown: true, title: 'Signing in…' }} />
