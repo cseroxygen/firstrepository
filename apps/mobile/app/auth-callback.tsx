@@ -139,6 +139,22 @@ export default function AuthCallback() {
     }
   }, [])
 
+  useEffect(() => {
+    let active = true
+    ;(async () => {
+      try {
+        const initial = await ExpoLinking.getInitialURL()
+        console.log('[auth-callback] getInitialURL result', initial)
+        if (active && initial && initial !== linkUrl) {
+          setLinkUrl(initial)
+        }
+      } catch (e) {
+        console.error('[auth-callback] getInitialURL error', e)
+      }
+    })()
+    return () => { active = false }
+  }, [])
+
   return (
     <View style={{ flex:1, alignItems:'center', justifyContent:'center', padding:24 }}>
       <ActivityIndicator />
