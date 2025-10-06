@@ -135,6 +135,7 @@ export async function logout(): Promise<void> {
 export async function resetPassword(email: string) {
   const sb = await ensureSupabase()
   const redirectTo = getAuthRedirect()
+  try { await AsyncStorage.setItem('last_signup_email', email) } catch {}
   const { error } = await sb.auth.resetPasswordForEmail(email, {
     redirectTo,
   })
