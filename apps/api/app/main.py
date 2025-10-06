@@ -104,11 +104,15 @@ def auth_deeplink(request: Request):
         <script>
           (function() {{
             var base = \"{base}\";
-            var query = window.location.search || '';
+            var search = window.location.search || '';
             var hash = window.location.hash || '';
-            var dest = base;
-            if (query && query.length > 0) dest += query;
-            if (hash && hash.length > 0) dest += hash;
+            var params = new URLSearchParams(search.replace(/^\?/, ''));
+            if (hash && hash.length > 1) {{
+              var hashParams = new URLSearchParams(hash.replace(/^#/, ''));
+              hashParams.forEach(function(value, key) {{ params.set(key, value); }});
+            }}
+            var queryString = params.toString();
+            var dest = queryString ? base + '?' + queryString : base;
             window.location.replace(dest);
           }})();
         </script>
