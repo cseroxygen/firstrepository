@@ -90,10 +90,7 @@ def health():
 
 @app.get("/auth/deeplink", response_class=HTMLResponse)
 def auth_deeplink(request: Request):
-    query = request.url.query
-    target = "homeref://auth-callback"
-    if query:
-        target = f"{target}?{query}"
+    base = "homeref://auth-callback"
     html = f"""
     <!doctype html>
     <html>
@@ -105,7 +102,15 @@ def auth_deeplink(request: Request):
         <h2>Opening HomeRef…</h2>
         <p>If nothing happens, please switch back to the app.</p>
         <script>
-          window.location.replace(\"{target}\");
+          (function() {{
+            var base = \"{base}\";
+            var query = window.location.search || '';
+            var hash = window.location.hash || '';
+            var dest = base;
+            if (query && query.length > 0) dest += query;
+            if (hash && hash.length > 0) dest += hash;
+            window.location.replace(dest);
+          }})();
         </script>
       </body>
     </html>
