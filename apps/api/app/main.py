@@ -1,7 +1,8 @@
 import os, io, time, uuid
 from typing import Optional, List, Dict
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body, Query, Response, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body, Query, Response, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 import boto3
 from botocore.config import Config
 import httpx
@@ -85,6 +86,31 @@ app.add_middleware(
 @app.get("/health")
 def health():
     return {"ok": True, "app": APP_NAME}
+
+
+@app.get("/auth/deeplink", response_class=HTMLResponse)
+def auth_deeplink(request: Request):
+    query = request.url.query
+    target = "homeref://auth-callback"
+    if query:
+        target = f"{target}?{query}"
+    html = f"""
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset=\"utf-8\" />
+        <title>HomeRef</title>
+      </head>
+      <body style=\"font-family: sans-serif; text-align: center; padding-top: 3rem;\">
+        <h2>Opening HomeRef…</h2>
+        <p>If nothing happens, please switch back to the app.</p>
+        <script>
+          window.location.replace(\"{target}\");
+        </script>
+      </body>
+    </html>
+    """
+    return HTMLResponse(html)
 
 @app.post("/upload")
 async def upload(manual_id: str = Form(...), device: Optional[str] = Form(None), namespace: Optional[str] = Form(None), file: UploadFile = File(...)):
