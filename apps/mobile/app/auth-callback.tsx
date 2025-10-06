@@ -22,6 +22,7 @@ const TOKEN_KEY_MAP: ReadonlyArray<[TokenField, AuthParamKey]> = [
 export default function AuthCallback() {
   const params = useLocalSearchParams<AuthParams>()
   const url = useURL()
+  console.log('[auth-callback] component mounted', params, url)
   const r = useRouter()
   const [err, setErr] = useState<string | null>(null)
   const handledRef = useRef(false)
