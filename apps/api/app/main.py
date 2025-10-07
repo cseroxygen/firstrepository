@@ -105,7 +105,7 @@ def auth_deeplink(request: Request):
         <script>
           (function() {{
             var base = \"{base}\";
-            try {
+            try {{
               var url = new URL(window.location.href);
               var params = new URLSearchParams(url.search);
               if (url.hash && url.hash.length > 1) {{
