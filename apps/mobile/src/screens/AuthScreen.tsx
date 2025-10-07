@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { signInWithGoogle, signInWithApple, signInEmail, getSession } from '@/lib/auth'
@@ -13,21 +13,22 @@ export default function AuthScreen() {
   const [info, setInfo] = useState<string | null>(null)
   const [err, setErr] = useState<string | null>(null)
 
+  const handleSession = useCallback(async (session: any | null | undefined) => {
+    if (!session) return false
+    try {
+      const pending = await AsyncStorage.getItem('pending_recovery')
+      if (pending) {
+        r.replace('/update-password')
+        return true
+      }
+    } catch {}
+    r.replace('/(tabs)')
+    return true
+  }, [r])
+
   // On mount, if session exists navigate; also subscribe to auth state changes so once email confirmed (signup flow) we auto-forward.
   useEffect(()=>{
     let unsub: any
-    const handleSession = async (session: any | null | undefined) => {
-      if (!session) return
-      try {
-        const pending = await AsyncStorage.getItem('pending_recovery')
-        if (pending) {
-          r.replace('/update-password')
-          return
-        }
-      } catch {}
-      r.replace('/(tabs)')
-    }
-
     (async()=>{
       const s = await getSession();
       await handleSession(s)
@@ -40,7 +41,7 @@ export default function AuthScreen() {
       unsub = listener.subscription.unsubscribe
     })()
     return ()=>{ try { unsub && unsub() } catch {} }
-  },[])
+  },[handleSession])
 
   type Mode = 'signin' | 'oauth'
   const run = async (fn: ()=>Promise<void>, mode: Mode) => {
@@ -53,7 +54,7 @@ export default function AuthScreen() {
         setInfo('No active session yet. Verify your credentials or reset your password.');
         return; // Do not navigate without an active session.
       }
-      r.replace('/(tabs)')
+      await handleSession(sess)
     } catch(e:any) {
       const msg = e?.message || String(e)
       // Existing user detection (Supabase common message patterns)
