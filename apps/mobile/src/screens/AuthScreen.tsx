@@ -76,7 +76,7 @@ export default function AuthScreen() {
         <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
           <View style={s.header}>
             <Text style={s.brand}>HomeRef</Text>
-            <Text style={s.subtitle}>A curated home archive powered by AI—manuals, receipts, and records in one elegant vault.</Text>
+            <Text style={s.subtitle}>Let AI keep every manual, receipt, and document tidy and ready when you need it.</Text>
           </View>
 
           <View style={s.card}>
