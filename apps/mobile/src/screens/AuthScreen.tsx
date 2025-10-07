@@ -3,6 +3,7 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, SafeAreaV
 import { useRouter } from 'expo-router'
 import { signInWithGoogle, signInWithApple, signInEmail, getSession } from '@/lib/auth'
 import { ensureSupabase } from '@/lib/supabase'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function AuthScreen() {
   const r = useRouter()
@@ -15,11 +16,26 @@ export default function AuthScreen() {
   // On mount, if session exists navigate; also subscribe to auth state changes so once email confirmed (signup flow) we auto-forward.
   useEffect(()=>{
     let unsub: any
+    const handleSession = async (session: any | null | undefined) => {
+      if (!session) return
+      try {
+        const pending = await AsyncStorage.getItem('pending_recovery')
+        if (pending) {
+          r.replace('/update-password')
+          return
+        }
+      } catch {}
+      r.replace('/(tabs)')
+    }
+
     (async()=>{
-      const s = await getSession(); if(s){ r.replace('/(tabs)') }
+      const s = await getSession();
+      await handleSession(s)
       const sb = await ensureSupabase()
-      const { data: listener } = sb.auth.onAuthStateChange((_event, session)=>{
-        if (session) { r.replace('/(tabs)') }
+      const { data: listener } = sb.auth.onAuthStateChange(async (_event, session)=>{
+        if (session) {
+          await handleSession(session)
+        }
       })
       unsub = listener.subscription.unsubscribe
     })()

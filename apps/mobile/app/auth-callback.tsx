@@ -102,6 +102,9 @@ export default function AuthCallback() {
 
         if (!cancelled) {
           if (tokens.type === 'recovery') {
+            try {
+              await AsyncStorage.setItem('pending_recovery', JSON.stringify({ email: emailHint || '', ts: Date.now() }))
+            } catch {}
             r.replace('/update-password')
           } else {
             r.replace('/(tabs)')

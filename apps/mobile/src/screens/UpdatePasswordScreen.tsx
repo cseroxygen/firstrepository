@@ -1,13 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TextInput, Pressable, ActivityIndicator, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { ensureSupabase } from '@/lib/supabase'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function UpdatePasswordScreen() {
   const r = useRouter()
   const [pw, setPw] = useState('')
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  const [email, setEmail] = useState<string | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const pending = await AsyncStorage.getItem('pending_recovery')
+        if (pending && mounted) {
+          try {
+            const parsed = JSON.parse(pending)
+            setEmail(parsed?.email || null)
+          } catch { setEmail(null) }
+        }
+      } catch {}
+    })()
+    return () => { mounted = false }
+  }, [])
+
+  const clearPendingRecovery = async () => {
+    try { await AsyncStorage.removeItem('pending_recovery') } catch {}
+  }
 
   const submit = async () => {
     setBusy(true); setErr(null)
@@ -15,13 +37,19 @@ export default function UpdatePasswordScreen() {
       const sb = await ensureSupabase()
       const { error } = await sb.auth.updateUser({ password: pw })
       if (error) throw error
+      await clearPendingRecovery()
       r.replace('/(tabs)')
     } catch (e:any) { setErr(e?.message || String(e)) } finally { setBusy(false) }
   }
 
+  useEffect(() => {
+    return () => { clearPendingRecovery() }
+  }, [])
+
   return (
     <View style={s.container}>
       <Text style={{ fontSize:22, fontWeight:'600' }}>Set new password</Text>
+      {!!email && <Text style={{ color:'#4B5563' }}>Account: {email}</Text>}
       {!!err && <Text style={{ color:'crimson' }}>{err}</Text>}
       <TextInput placeholder="New password" secureTextEntry value={pw} onChangeText={setPw} style={s.inp} />
       <Pressable style={s.btnPrimary} disabled={busy || !pw} onPress={submit}>
