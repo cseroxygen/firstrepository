@@ -107,18 +107,19 @@ def auth_deeplink(request: Request):
             var base = \"{base}\";
             try {
               var url = new URL(window.location.href);
-              var token = url.searchParams.get('token') || url.hash.replace(/^#/, '').split('token=')[1];
-              var type = url.searchParams.get('type') || url.hash.replace(/^#/, '').split('type=')[1];
-              var params = new URLSearchParams();
-              if (token) params.set('token', token);
-              if (type) params.set('type', type);
-              var dest = params.toString() ? base + '?' + params.toString() : base;
+              var params = new URLSearchParams(url.search);
+              if (url.hash && url.hash.length > 1) {{
+                var hashParams = new URLSearchParams(url.hash.replace(/^#/, ''));
+                hashParams.forEach(function(value, key) {{ params.set(key, value); }});
+              }}
+              var query = params.toString();
+              var dest = query ? base + '?' + query : base;
               console.log('[auth-deeplink] redirecting to', dest);
               window.location.replace(dest);
-            } catch (err) {
+            }} catch (err) {{
               console.error('[auth-deeplink] failed to parse URL', err);
               window.location.replace(base);
-            }
+            }}
           }})();
         </script>
       </body>

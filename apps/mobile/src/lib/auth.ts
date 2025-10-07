@@ -3,9 +3,27 @@ import * as Linking from 'expo-linking'
 import Constants from 'expo-constants'
 import * as WebBrowser from 'expo-web-browser'
 import { ensureSupabase } from './supabase'
+import { defaultApiBase } from '@/lib/config'
+
+const normalizeBase = (input: string | undefined | null) => {
+  if (!input) return ''
+  return input.replace(/\/+$/, '')
+}
+
+const getBridgeRedirect = () => {
+  const expoConfig = Constants?.expoConfig as any
+  const extras = expoConfig?.extra || {}
+  const base = normalizeBase(extras.apiBase || defaultApiBase())
+  if (!base || !base.startsWith('http')) return null
+  return `${base}/auth/deeplink`
+}
 
 // Resolve the auth callback target dynamically so it works in dev builds (Expo Go) and production binaries.
-const getAuthRedirect = () => {
+const getAuthRedirect = (options?: { preferBridge?: boolean }) => {
+  if (options?.preferBridge) {
+    const bridge = getBridgeRedirect()
+    if (bridge) return bridge
+  }
   const candidate = Linking.createURL('auth-callback')
   if (!candidate.startsWith('http')) {
     return candidate
@@ -40,7 +58,7 @@ export async function signInWithGoogle(forceSelect: boolean = true) {
   if (forceSelect) {
     try { await sb.auth.signOut() } catch {}
   }
-  const redirectTo = getAuthRedirect()
+  const redirectTo = getAuthRedirect({ preferBridge: true })
   const { data, error } = await sb.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -106,7 +124,7 @@ export async function signInWithApple() {
 
 export async function signUpEmail(email: string, password: string) {
   const sb = await ensureSupabase()
-  const redirectTo = getAuthRedirect()
+  const redirectTo = getAuthRedirect({ preferBridge: true })
   const redirectWithEmail = appendQueryParam(redirectTo, 'email', email)
   try { await AsyncStorage.setItem('last_signup_email', email) } catch {}
   const { error } = await sb.auth.signUp({
@@ -134,7 +152,7 @@ export async function logout(): Promise<void> {
 
 export async function resetPassword(email: string) {
   const sb = await ensureSupabase()
-  const redirectTo = getAuthRedirect()
+  const redirectTo = getAuthRedirect({ preferBridge: true })
   try { await AsyncStorage.setItem('last_signup_email', email) } catch {}
   const { error } = await sb.auth.resetPasswordForEmail(email, {
     redirectTo,
@@ -144,7 +162,7 @@ export async function resetPassword(email: string) {
 
 export async function resendConfirmation(email: string) {
   const sb = await ensureSupabase()
-  const redirectTo = getAuthRedirect()
+  const redirectTo = getAuthRedirect({ preferBridge: true })
   const redirectWithEmail = appendQueryParam(redirectTo, 'email', email)
   try { await AsyncStorage.setItem('last_signup_email', email) } catch {}
   const { error } = await sb.auth.resend({ type: 'signup', email, options: { emailRedirectTo: redirectWithEmail } }) as any
