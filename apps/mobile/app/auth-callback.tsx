@@ -69,6 +69,12 @@ export default function AuthCallback() {
           || await AsyncStorage.getItem('last_signup_email')
           || undefined
 
+        if (tokens.type === 'recovery') {
+          try {
+            await AsyncStorage.setItem('pending_recovery', JSON.stringify({ email: emailHint || '', ts: Date.now() }))
+          } catch {}
+        }
+
         if (tokens.otpToken) {
           if (!emailHint) {
             throw new Error('Missing email context for verification. Open the confirmation link from the same device where you signed up or sign in with Google first.')
@@ -102,9 +108,6 @@ export default function AuthCallback() {
 
         if (!cancelled) {
           if (tokens.type === 'recovery') {
-            try {
-              await AsyncStorage.setItem('pending_recovery', JSON.stringify({ email: emailHint || '', ts: Date.now() }))
-            } catch {}
             r.replace('/update-password')
           } else {
             r.replace('/(tabs)')
