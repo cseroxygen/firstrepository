@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { useRouter } from 'expo-router'
-import { signInWithGoogle, signInWithApple, signInEmail, getSession } from '@/lib/auth'
+import { signInWithGoogle, signInEmail, getSession } from '@/lib/auth'
 import { ensureSupabase } from '@/lib/supabase'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -76,7 +76,7 @@ export default function AuthScreen() {
         <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
           <View style={s.header}>
             <Text style={s.brand}>HomeRef</Text>
-            <Text style={s.subtitle}>Keep manuals, receipts, and projects organized for your home.</Text>
+            <Text style={s.subtitle}>Let AI organize manuals, receipts, and home documents so you don't have to.</Text>
           </View>
 
           <View style={s.card}>
@@ -101,19 +101,6 @@ export default function AuthScreen() {
               <Text style={s.providerBtnTxt}>Continue with Google</Text>
             </Pressable>
 
-            <Pressable
-              disabled={busy}
-              style={({ pressed }) => [
-                s.providerBtn,
-                s.providerApple,
-                pressed && !busy ? s.buttonPressed : null,
-                busy ? s.buttonDisabled : null,
-              ]}
-              onPress={() => run(signInWithApple, 'oauth')}
-            >
-              <Text style={s.providerBtnTxt}>Continue with Apple</Text>
-            </Pressable>
-
             <View style={s.divider}>
               <View style={s.dividerLine} />
               <Text style={s.dividerLabel}>or use email</Text>
@@ -126,6 +113,8 @@ export default function AuthScreen() {
                 placeholder="you@example.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
+                textContentType="emailAddress"
+                autoCorrect={false}
                 value={email}
                 onChangeText={setEmail}
                 style={s.input}
@@ -202,8 +191,7 @@ const s = StyleSheet.create({
   error: { color:'crimson', fontSize:14, lineHeight:20 },
   info: { color:'#4B5563', fontSize:14, lineHeight:20 },
   providerBtn: { borderRadius:14, paddingVertical:14, alignItems:'center', justifyContent:'center' },
-  providerGoogle: { backgroundColor:'#EA4335' },
-  providerApple: { backgroundColor:'#111827' },
+  providerGoogle: { backgroundColor:'#0A84FF' },
   providerBtnTxt: { color:'#fff', fontWeight:'600', fontSize:16 },
   buttonPressed: { opacity:0.85 },
   buttonDisabled: { opacity:0.6 },
