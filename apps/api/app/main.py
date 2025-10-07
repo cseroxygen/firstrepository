@@ -90,7 +90,6 @@ def health():
 
 @app.get("/auth/deeplink", response_class=HTMLResponse)
 def auth_deeplink(request: Request):
-    print("[auth-deeplink] incoming", str(request.url))
     base = "homeref://auth-callback"
     html = f"""
     <!doctype html>
@@ -114,10 +113,8 @@ def auth_deeplink(request: Request):
               }}
               var query = params.toString();
               var dest = query ? base + '?' + query : base;
-              console.log('[auth-deeplink] redirecting to', dest);
               window.location.replace(dest);
             }} catch (err) {{
-              console.error('[auth-deeplink] failed to parse URL', err);
               window.location.replace(base);
             }}
           }})();

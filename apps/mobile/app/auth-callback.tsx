@@ -25,7 +25,6 @@ export default function AuthCallback() {
   const urlFromHook = useURL()
   const [linkUrl, setLinkUrl] = useState<string | null>(urlFromHook ?? null)
   const url = linkUrl
-  console.log('[auth-callback] component mounted', params, url)
   const r = useRouter()
   const [err, setErr] = useState<string | null>(null)
   const handledRef = useRef(false)
@@ -33,15 +32,11 @@ export default function AuthCallback() {
   useEffect(() => {
     if (handledRef.current) return
 
-    console.log('[auth-callback] effect triggered', { params, url })
-
     let cancelled = false
     const run = async () => {
       try {
         const resolvedUrl = url ?? await ExpoLinking.getInitialURL()
         const tokens = extractAuthTokens(params, resolvedUrl)
-        console.log('[auth-callback] incoming params', params, resolvedUrl)
-        console.log('[auth-callback] resolved tokens', tokens)
         const sb = await ensureSupabase()
 
         if (!tokens) {
@@ -115,7 +110,6 @@ export default function AuthCallback() {
         }
       } catch (e: any) {
         const msg = e?.message || String(e)
-        console.error('[auth-callback] failed', msg, e)
         if (!cancelled) {
           setErr(msg)
         }
@@ -137,7 +131,6 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const subscription = ExpoLinking.addEventListener('url', (event) => {
-      console.log('[auth-callback] event url', event.url)
       setLinkUrl(event.url)
     })
     return () => {
@@ -150,12 +143,10 @@ export default function AuthCallback() {
     ;(async () => {
       try {
         const initial = await ExpoLinking.getInitialURL()
-        console.log('[auth-callback] getInitialURL result', initial)
         if (active && initial && initial !== linkUrl) {
           setLinkUrl(initial)
         }
       } catch (e) {
-        console.error('[auth-callback] getInitialURL error', e)
       }
     })()
     return () => { active = false }
