@@ -109,16 +109,17 @@ export default function AuthScreen() {
 
             <View style={s.field}>
               <Text style={s.label}>Email</Text>
-              <TextInput
-                placeholder="you@example.com"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                autoCorrect={false}
-                value={email}
-                onChangeText={setEmail}
-                style={s.input}
-                placeholderTextColor="#94A3B8"
+            <TextInput
+              placeholder="you@example.com"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              autoComplete="email"
+              autoCorrect={false}
+              value={email}
+              onChangeText={setEmail}
+              style={s.input}
+              placeholderTextColor="#94A3B8"
               />
             </View>
 
@@ -168,12 +169,12 @@ export default function AuthScreen() {
   )
 }
 const s = StyleSheet.create({
-  safeArea: { flex:1, backgroundColor:'#0B1220' },
+  safeArea: { flex:1, backgroundColor:'#F4F6FB' },
   flex: { flex:1 },
   scroll: { flexGrow:1, padding:24, paddingBottom:40 },
   header: { marginBottom:24 },
-  brand: { fontSize:32, fontWeight:'800', color:'#fff', letterSpacing:0.3 },
-  subtitle: { color:'rgba(255,255,255,0.78)', fontSize:15, lineHeight:22, marginTop:8 },
+  brand: { fontSize:32, fontWeight:'800', color:'#101828', letterSpacing:0.3 },
+  subtitle: { color:'#475467', fontSize:15, lineHeight:22, marginTop:8 },
   card: {
     backgroundColor:'#fff',
     borderRadius:24,
