@@ -90,6 +90,7 @@ def health():
 
 @app.get("/auth/deeplink", response_class=HTMLResponse)
 def auth_deeplink(request: Request):
+    print("[auth-deeplink] incoming", str(request.url))
     base = "homeref://auth-callback"
     html = f"""
     <!doctype html>
@@ -104,16 +105,20 @@ def auth_deeplink(request: Request):
         <script>
           (function() {{
             var base = \"{base}\";
-            var search = window.location.search || '';
-            var hash = window.location.hash || '';
-            var params = new URLSearchParams(search.replace(/^\?/, ''));
-            if (hash && hash.length > 1) {{
-              var hashParams = new URLSearchParams(hash.replace(/^#/, ''));
-              hashParams.forEach(function(value, key) {{ params.set(key, value); }});
-            }}
-            var queryString = params.toString();
-            var dest = queryString ? base + '?' + queryString : base;
-            window.location.replace(dest);
+            try {
+              var url = new URL(window.location.href);
+              var token = url.searchParams.get('token') || url.hash.replace(/^#/, '').split('token=')[1];
+              var type = url.searchParams.get('type') || url.hash.replace(/^#/, '').split('type=')[1];
+              var params = new URLSearchParams();
+              if (token) params.set('token', token);
+              if (type) params.set('type', type);
+              var dest = params.toString() ? base + '?' + params.toString() : base;
+              console.log('[auth-deeplink] redirecting to', dest);
+              window.location.replace(dest);
+            } catch (err) {
+              console.error('[auth-deeplink] failed to parse URL', err);
+              window.location.replace(base);
+            }
           }})();
         </script>
       </body>
