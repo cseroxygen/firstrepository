@@ -76,7 +76,7 @@ export default function AuthScreen() {
         <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
           <View style={s.header}>
             <Text style={s.brand}>HomeRef</Text>
-            <Text style={s.subtitle}>Let AI organize manuals, receipts, and home documents so you don't have to.</Text>
+            <Text style={s.subtitle}>A curated home archive powered by AI—manuals, receipts, and records in one elegant vault.</Text>
           </View>
 
           <View style={s.card}>
@@ -109,17 +109,17 @@ export default function AuthScreen() {
 
             <View style={s.field}>
               <Text style={s.label}>Email</Text>
-            <TextInput
-              placeholder="you@example.com"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              autoComplete="email"
-              autoCorrect={false}
-              value={email}
-              onChangeText={setEmail}
-              style={s.input}
-              placeholderTextColor="#94A3B8"
+              <TextInput
+                placeholder="you@example.com"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                textContentType="username"
+                autoComplete="username"
+                autoCorrect={false}
+                value={email}
+                onChangeText={setEmail}
+                style={s.input}
+                placeholderTextColor="#94A3B8"
               />
             </View>
 
