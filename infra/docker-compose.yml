@@ -18,6 +18,13 @@ services:
     env_file: ../.env
     ports: [ "8000:8000" ]
     depends_on: [ minio, qdrant ]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import sys,urllib.request;\ntry:\n r=urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2); sys.exit(0 if r.status==200 else 1)\nexcept Exception:\n sys.exit(1)\" "]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
 
 volumes:
   minio: {}
